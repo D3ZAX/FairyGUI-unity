@@ -138,7 +138,7 @@ namespace FairyGUI
 					return;
 			}
 
-			if (!_started && rot > 5)
+			if (!_started && Mathf.Abs(rot) > 5)
 			{
 				_started = true;
 				rotation = 0;
