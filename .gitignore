@@ -32,6 +32,7 @@ sysinfo.txt
 
 # Project No Core Code
 *.meta
+.vs/
 Assets/_TerrainAutoUpgrade
 Assets/Examples
 Assets/StreamingAssets
