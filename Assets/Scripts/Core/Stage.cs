@@ -557,7 +557,7 @@ namespace FairyGUI
 				_touchTarget = null;
 				for (int i = 0; i < Input.touchCount; ++i)
 				{
-					Touch uTouch = Input.GetTouch(i);
+					Touch uTouch = InputTouch.GetTouch(i);
 
 					Vector2 pos = uTouch.position;
 					pos.y = stageHeight - pos.y;
@@ -716,7 +716,7 @@ namespace FairyGUI
 				{
 					for (int i = 0; i < Input.touchCount; ++i)
 					{
-						Touch uTouch = Input.GetTouch(i);
+						Touch uTouch = InputTouch.GetTouch(i);
 						_touchPosition = uTouch.position;
 						_touchPosition.y = stageHeight - _touchPosition.y;
 					}
@@ -859,7 +859,7 @@ namespace FairyGUI
 			int tc = Input.touchCount;
 			for (int i = 0; i < tc; ++i)
 			{
-				Touch uTouch = Input.GetTouch(i);
+				Touch uTouch = InputTouch.GetTouch(i);
 
 				if (uTouch.phase == TouchPhase.Stationary)
 					continue;
