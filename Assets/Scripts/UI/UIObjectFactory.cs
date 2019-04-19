@@ -12,10 +12,29 @@ namespace FairyGUI
 	public class UIObjectFactory
 	{
 		public delegate GComponent GComponentCreator();
-		public delegate GLoader GLoaderCreator();
 
 		static Dictionary<string, GComponentCreator> packageItemExtensions = new Dictionary<string, GComponentCreator>();
-		static GLoaderCreator loaderCreator;
+
+        static Dictionary<ObjectType, Func<GObject>> objCreateFuncDic = new Dictionary<ObjectType, Func<GObject>>();
+
+        static UIObjectFactory()
+        {
+            objCreateFuncDic.Add(ObjectType.Image, () => new GImage());
+            objCreateFuncDic.Add(ObjectType.MovieClip, () => new GMovieClip());
+            objCreateFuncDic.Add(ObjectType.Component, () => new GComponent());
+            objCreateFuncDic.Add(ObjectType.Text, () => new GTextField());
+            objCreateFuncDic.Add(ObjectType.RichText, () => new GRichTextField());
+            objCreateFuncDic.Add(ObjectType.InputText, () => new GTextInput());
+            objCreateFuncDic.Add(ObjectType.Group, () => new GGroup());
+            objCreateFuncDic.Add(ObjectType.Graph, () => new GGraph());
+            objCreateFuncDic.Add(ObjectType.Loader, () => new GLoader());
+            objCreateFuncDic.Add(ObjectType.Button, () => new GButton());
+            objCreateFuncDic.Add(ObjectType.Label, () => new GLabel());
+            objCreateFuncDic.Add(ObjectType.ProgressBar, () => new GProgressBar());
+            objCreateFuncDic.Add(ObjectType.Slider, () => new GSlider());
+            objCreateFuncDic.Add(ObjectType.ScrollBar, () => new GScrollBar());
+            objCreateFuncDic.Add(ObjectType.ComboBox, () => new GComboBox());
+        }
 
 		/// <summary>
 		/// 
@@ -68,17 +87,27 @@ namespace FairyGUI
 		/// <param name="type"></param>
 		public static void SetLoaderExtension(System.Type type)
 		{
-			loaderCreator = () => { return (GLoader)Activator.CreateInstance(type); };
+			objCreateFuncDic[ObjectType.Loader] = () => { return (GLoader)Activator.CreateInstance(type); };
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="creator"></param>
-		public static void SetLoaderExtension(GLoaderCreator creator)
+		public static void SetLoaderExtension(Func<GLoader> creator)
 		{
-			loaderCreator = creator;
+            objCreateFuncDic[ObjectType.Loader] = creator;
 		}
+
+        /// <summary>
+        /// Extend FairyGUI obj class with custom class
+        /// </summary>
+        /// <param name="type">obj class type</param>
+        /// <param name="creator">custom class create function</param>
+        public static void SetObjectExtension(ObjectType type, Func<GObject> creator)
+        {
+            objCreateFuncDic[type] = creator;
+        }
 
 		internal static void ResolvePackageItemExtension(PackageItem pi)
 		{
@@ -90,7 +119,6 @@ namespace FairyGUI
 		public static void Clear()
 		{
 			packageItemExtensions.Clear();
-			loaderCreator = null;
 		}
 
 		/// <summary>
@@ -118,62 +146,14 @@ namespace FairyGUI
 		{
 			Stats.LatestObjectCreation++;
 
-			switch (type)
-			{
-				case ObjectType.Image:
-					return new GImage();
-
-				case ObjectType.MovieClip:
-					return new GMovieClip();
-
-				case ObjectType.Component:
-					return new GComponent();
-
-				case ObjectType.Text:
-					return new GTextField();
-
-				case ObjectType.RichText:
-					return new GRichTextField();
-
-				case ObjectType.InputText:
-					return new GTextInput();
-
-				case ObjectType.Group:
-					return new GGroup();
-
-				case ObjectType.List:
-					return new GList();
-
-				case ObjectType.Graph:
-					return new GGraph();
-
-				case ObjectType.Loader:
-					if (loaderCreator != null)
-						return loaderCreator();
-					else
-						return new GLoader();
-
-				case ObjectType.Button:
-					return new GButton();
-
-				case ObjectType.Label:
-					return new GLabel();
-
-				case ObjectType.ProgressBar:
-					return new GProgressBar();
-
-				case ObjectType.Slider:
-					return new GSlider();
-
-				case ObjectType.ScrollBar:
-					return new GScrollBar();
-
-				case ObjectType.ComboBox:
-					return new GComboBox();
-
-				default:
-					return null;
-			}
+			if (objCreateFuncDic.ContainsKey(type))
+            {
+                return objCreateFuncDic[type]();
+            }
+            else
+            {
+                return null;
+            }
 		}
 	}
 }
