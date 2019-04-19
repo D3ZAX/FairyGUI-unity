@@ -23,6 +23,25 @@ namespace FairyGUI
 		GObject _tooltipWin;
 		GObject _defaultTooltipWin;
 
+        float _designWidth;
+        float _designHeight;
+
+        public float DesignWidth
+        {
+            get
+            {
+                return _designWidth;
+            }
+        }
+
+        public float DesignHeight
+        {
+            get
+            {
+                return _designHeight;
+            }
+        }
+
 		internal static GRoot _inst;
 		public static GRoot inst
 		{
@@ -71,6 +90,9 @@ namespace FairyGUI
 			scaler.screenMatchMode = screenMatchMode;
 			scaler.ApplyChange();
 			ApplyContentScaleFactor();
+
+            _designWidth = designResolutionX;
+            _designHeight = designResolutionY;
 		}
 
 		/// <summary>
@@ -128,11 +150,24 @@ namespace FairyGUI
 			AdjustModalLayer();
 		}
 
-		/// <summary>
-		/// 将一个窗口提到所有窗口的最前面
-		/// </summary>
-		/// <param name="win"></param>
-		public void BringToFront(Window win)
+
+		public override GObject AddChildAt(GObject child, int index)
+        {
+            if (child.width == DesignWidth && child.height == DesignHeight)
+            {
+                child.width = width;
+                child.height = height;
+                child.AddRelation(this, RelationType.Width);
+                child.AddRelation(this, RelationType.Height);
+            }
+            return base.AddChildAt(child, index);
+        }
+
+        /// <summary>
+        /// 将一个窗口提到所有窗口的最前面
+        /// </summary>
+        /// <param name="win"></param>
+        public void BringToFront(Window win)
 		{
 			int cnt = this.numChildren;
 			int i;
