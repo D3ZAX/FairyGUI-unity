@@ -26,6 +26,7 @@ namespace FairyGUI
             objCreateFuncDic.Add(ObjectType.RichText, () => new GRichTextField());
             objCreateFuncDic.Add(ObjectType.InputText, () => new GTextInput());
             objCreateFuncDic.Add(ObjectType.Group, () => new GGroup());
+            objCreateFuncDic.Add(ObjectType.List, () => new GList());
             objCreateFuncDic.Add(ObjectType.Graph, () => new GGraph());
             objCreateFuncDic.Add(ObjectType.Loader, () => new GLoader());
             objCreateFuncDic.Add(ObjectType.Button, () => new GButton());
